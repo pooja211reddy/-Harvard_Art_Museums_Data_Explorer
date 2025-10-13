@@ -1,5 +1,3 @@
-# -Harvard_Art_Museums_Data_Explorer
-“A Streamlit-based interactive dashboard integrating the Harvard Art Museums API with MySQL for end-to-end ETL, querying, and visualization.”
 # 🏛️ Harvard Art Museums Data Explorer 🎨  
 
 An interactive **Streamlit + MySQL** application that fetches, stores, and visualizes data from the **Harvard Art Museums API**.  
@@ -94,5 +92,5 @@ https://api.harvardartmuseums.org/object?apikey=YOUR_API_KEY
 🖼️ Flow Diagram
 
 🧑‍🎨 Credits
-Developed by: Pooja Reddy
+Developed by: Pooja Reddy Nedunuri
 Powered by: Harvard Art Museums API • Streamlit • MySQL
