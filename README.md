@@ -36,18 +36,13 @@ It enables users to dynamically query thousands of art artifact records and expl
 
 ## ⚙️ Setup Instructions
 
-### 1️⃣ Clone the Repository
+ 1️⃣ Clone the Repository
 ```bash
 git clone https://github.com/pooja211reddy/Harvard-Art-Museums-Data-Explorer.git
 cd Harvard-Art-Museums-Data-Explorer
-2️⃣ Install Dependencies
-bash
-Copy code
-pip install -r requirements.txt
-3️⃣ Configure MySQL
-Create a database named harvard_art and run the script below (found in sql/create_tables.sql).
-
-4️⃣ Run the Streamlit App
+2️⃣ Configure MySQL
+Create a database named harvard_art
+3️⃣ Run the Streamlit App
 bash
 Copy code
 streamlit run harvard_artifacts.py
