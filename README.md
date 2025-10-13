@@ -15,26 +15,7 @@ It enables users to dynamically query thousands of art artifact records and expl
 
 ---
 
-## 🗂️ Project Structure
-
-Harvard-Art-Museums-Data-Explorer/
-│
-├── harvard_artifacts.py # Main Streamlit application
-├── requirements.txt # Required Python dependencies
-├── README.md # Project documentation
-│
-├── assets/
-│ └── flow_diagram.png # Data pipeline / workflow diagram
-│
-└── sql/
-└── create_tables.sql # SQL scripts for table creation
-
-yaml
-Copy code
-
----
-
-## 🧠 Workflow Overview
+## Workflow Overview
 
 1️⃣ **Data Fetching:**  
    → Uses Harvard API to extract artifact details by classification (Paintings, Coins, Jewelry, etc.).  
