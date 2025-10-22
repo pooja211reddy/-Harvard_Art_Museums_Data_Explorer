@@ -2,8 +2,7 @@ import streamlit as st
 import requests
 import mysql.connector
 
-
-# 🔑 API & DB Setup
+#  API & DB Setup
 API_KEY = "8f48cd3f-1882-4cf0-93ed-a0745c2b678a"
 BASE_URL = "https://api.harvardartmuseums.org/object"
 DB_CONFIG = {
@@ -13,106 +12,40 @@ DB_CONFIG = {
     'database': 'harvard_art'
 }
 
-import streamlit as st
-
-# ✅ Enable HTML rendering
-st.markdown("""
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-    <div style="text-align:center; padding:20px 0;">
-        <h1 style="font-family:'Poppins',sans-serif; font-weight:700; font-size:42px; color:#1e3a8a; margin-bottom:10px;">
-            <i class="fa-solid fa-landmark" style="color:#1e3a8a;"></i>
-            &nbsp; Harvard Art Museums 
-            <span style="color:#7c3aed;">Data Explorer</span>
-            &nbsp;<i class="fa-solid fa-palette" style="color:#7c3aed;"></i>
-        </h1>
-        <p style="font-size:17px; color:#475569; margin-top:-5px;">
-            <i class="fa-solid fa-database" style="color:#2563eb;"></i>
-            &nbsp; Powered by Harvard API · MySQL · Streamlit &nbsp;
-            <i class="fa-solid fa-chart-line" style="color:#22c55e;"></i>
-        </p>
-    </div>
-""", unsafe_allow_html=True)
-
-
-
-
-page_bg = """
-<style>
-/* ===== Main Page Background ===== */
-[data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
-    color: #1e293b;
-}
-
-/* ===== Sidebar Styling ===== */
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-    border-right: 2px solid #64748b;
-}
-
-[data-testid="stSidebar"] * {
-    color: #f1f5f9 !important;
-    font-size: 15px !important;
-}
-
-/* ===== Headings & Text ===== */
-h1, h2, h3 {
-    color: #1e293b;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-h1 {
-    color: #0f172a;
-    background: -webkit-linear-gradient(90deg, #334155, #1e3a8a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-h2 {
-    color: #1e293b;
-}
-
-[data-testid="stHeader"] {
-    background: rgba(255,255,255,0.4);
-    backdrop-filter: blur(5px);
-}
-
-/* ===== Buttons ===== */
-.stButton>button {
-    background: linear-gradient(90deg, #3b82f6, #6366f1);
-    color: white;
-    border: none;
-    padding: 0.6em 1.2em;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: 0.3s;
-}
-.stButton>button:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(90deg, #2563eb, #4f46e5);
-}
-
-/* ===== Info Boxes ===== */
-div[data-testid="stAlert"] {
-    border-radius: 10px;
-    font-size: 15px;
-}
-
-/* ===== Tabs Styling ===== */
-[data-baseweb="tab-list"] {
-    background-color: #f8fafc;
-    border-radius: 8px;
-}
-</style>
-"""
-st.markdown(page_bg, unsafe_allow_html=True)
-
-
 # ⚙️ MySQL Connection
 def connect_db():
     return mysql.connector.connect(**DB_CONFIG)
+
+# 🎨 Fetch classifications dynamically (only ≥ 2500 records)
+@st.cache_data(show_spinner=False)
+def get_classifications():
+    url = "https://api.harvardartmuseums.org/classification"
+    params = {"apikey": API_KEY, "size": 100}
+    response = requests.get(url, params=params)
+    data = response.json()
+    return [
+        rec["name"] for rec in data.get("records", [])
+        if rec.get("objectcount", 0) >= 2500
+    ]
+
+# 📦 Fetch artifact data for chosen classification
+def fetch_artifacts(classification):
+    objects, page = [], 1
+    st.info(f"Fetching up to 2500 records for '{classification}'...")
+    while len(objects) < 2500:
+        resp = requests.get(BASE_URL, params={
+            "apikey": API_KEY,
+            "size": 100,
+            "page": page,
+            "classification": classification
+        })
+        data = resp.json()
+        recs = data.get("records", [])
+        if not recs:
+            break
+        objects.extend(recs)
+        page += 1
+    return objects[:2500]
 
 # ✅ Create tables if not exist
 def create_tables():
@@ -159,37 +92,6 @@ def create_tables():
     """)
     conn.commit()
     conn.close()
-
-# 🎨 Fetch classifications dynamically (only ≥ 2500 records)
-@st.cache_data(show_spinner=False)
-def get_classifications():
-    url = "https://api.harvardartmuseums.org/classification"
-    params = {"apikey": API_KEY, "size": 100}
-    response = requests.get(url, params=params)
-    data = response.json()
-    return [
-        rec["name"] for rec in data.get("records", [])
-        if rec.get("objectcount", 0) >= 2500
-    ]
-
-# 📦 Fetch artifact data for chosen classification
-def fetch_artifacts(classification):
-    objects, page = [], 1
-    st.info(f"Fetching up to 2500 records for '{classification}'...")
-    while len(objects) < 2500:
-        resp = requests.get(BASE_URL, params={
-            "apikey": API_KEY,
-            "size": 100,
-            "page": page,
-            "classification": classification
-        })
-        data = resp.json()
-        recs = data.get("records", [])
-        if not recs:
-            break
-        objects.extend(recs)
-        page += 1
-    return objects[:2500]
 
 # 💾 Insert data into MySQL directly
 def insert_into_mysql(records, classification):
@@ -272,6 +174,96 @@ def run_query(query):
     headers = [desc[0] for desc in cur.description]
     conn.close()
     return headers, rows
+
+# ✅ Enable HTML rendering
+st.markdown("""
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <div style="text-align:center; padding:20px 0;">
+        <h1 style="font-family:'Poppins',sans-serif; font-weight:700; font-size:42px; color:#1e3a8a; margin-bottom:10px;">
+            <i class="fa-solid fa-landmark" style="color:#1e3a8a;"></i>
+            &nbsp; Harvard Art Museums 
+            <span style="color:#7c3aed;">Data Explorer</span>
+            &nbsp;<i class="fa-solid fa-palette" style="color:#7c3aed;"></i>
+        </h1>
+        <p style="font-size:17px; color:#475569; margin-top:-5px;">
+            <i class="fa-solid fa-database" style="color:#2563eb;"></i>
+            &nbsp; Powered by Harvard API · MySQL · Streamlit &nbsp;
+            <i class="fa-solid fa-chart-line" style="color:#22c55e;"></i>
+        </p>
+    </div>
+""", unsafe_allow_html=True)
+page_bg = """
+<style>
+/* ===== Main Page Background ===== */
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    color: #1e293b;
+}
+
+/* ===== Sidebar Styling ===== */
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    border-right: 2px solid #64748b;
+}
+
+[data-testid="stSidebar"] * {
+    color: #f1f5f9 !important;
+    font-size: 15px !important;
+}
+
+/* ===== Headings & Text ===== */
+h1, h2, h3 {
+    color: #1e293b;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+h1 {
+    color: #0f172a;
+    background: -webkit-linear-gradient(90deg, #334155, #1e3a8a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h2 {
+    color: #1e293b;
+}
+
+[data-testid="stHeader"] {
+    background: rgba(255,255,255,0.4);
+    backdrop-filter: blur(5px);
+}
+
+/* ===== Buttons ===== */
+.stButton>button {
+    background: linear-gradient(90deg, #3b82f6, #6366f1);
+    color: white;
+    border: none;
+    padding: 0.6em 1.2em;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+.stButton>button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, #2563eb, #4f46e5);
+}
+
+/* ===== Info Boxes ===== */
+div[data-testid="stAlert"] {
+    border-radius: 10px;
+    font-size: 15px;
+}
+
+/* ===== Tabs Styling ===== */
+[data-baseweb="tab-list"] {
+    background-color: #f8fafc;
+    border-radius: 8px;
+}
+</style>
+"""
+st.markdown(page_bg, unsafe_allow_html=True)
 
 
 # ---------- SIDEBAR NAVIGATION ----------
@@ -552,3 +544,4 @@ elif page.startswith("5️⃣"):
     💡 Delivering data-driven insights with precision.
 </div>
 """, unsafe_allow_html=True)
+
