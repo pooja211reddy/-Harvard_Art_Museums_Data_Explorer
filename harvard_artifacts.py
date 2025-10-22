@@ -265,7 +265,6 @@ div[data-testid="stAlert"] {
 """
 st.markdown(page_bg, unsafe_allow_html=True)
 
-
 # ---------- SIDEBAR NAVIGATION ----------
 st.sidebar.title("📚 Navigation Menu")
 page = st.sidebar.radio(
@@ -329,204 +328,229 @@ elif page.startswith("3️⃣"):
 elif page.startswith("4️⃣"):
     st.header("🔍 Query Explorer")
     queries = {
-    "① Artifacts from 11th Century Byzantine Culture":
-        "SELECT * FROM artifact_metadata WHERE century='11th century' AND culture='Byzantine';",
+        "① Artifacts from 11th Century Byzantine Culture":
+            "SELECT * FROM artifact_metadata WHERE century='11th century' AND culture='Byzantine';",
 
-    "② Unique Cultures in Artifacts":
-        "SELECT DISTINCT culture FROM artifact_metadata WHERE culture IS NOT NULL ORDER BY culture;",
+        "② Unique Cultures in Artifacts":
+            "SELECT DISTINCT culture FROM artifact_metadata WHERE culture IS NOT NULL ORDER BY culture;",
 
-    "③ Artifacts from Archaic Period":
-        "SELECT * FROM artifact_metadata WHERE period='Archaic Period';",
+        "③ Artifacts from Archaic Period":
+            "SELECT * FROM artifact_metadata WHERE period='Archaic Period';",
 
-    "④ Artifact Titles by Accession Year (Desc)":
-        "SELECT title, accessionyear FROM artifact_metadata WHERE accessionyear IS NOT NULL ORDER BY accessionyear DESC;",
+        "④ Artifact Titles by Accession Year (Desc)":
+            "SELECT title, accessionyear FROM artifact_metadata WHERE accessionyear IS NOT NULL ORDER BY accessionyear DESC;",
 
-    "⑤ Artifacts per Department":
-        "SELECT department, COUNT(*) AS total FROM artifact_metadata GROUP BY department ORDER BY total DESC;",
+        "⑤ Artifacts per Department":
+            "SELECT department, COUNT(*) AS total FROM artifact_metadata GROUP BY department ORDER BY total DESC;",
 
-    "⑥ Artifacts with More Than 1 Image":
-        "SELECT * FROM artifact_media WHERE imagecount > 1;",
+        "⑥ Artifacts with More Than 1 Image":
+            "SELECT * FROM artifact_media WHERE imagecount > 1;",
 
-    "⑦ Average Rank of All Artifacts":
-        "SELECT AVG(`rank`) AS avg_rank FROM artifact_media;",
+        "⑦ Average Rank of All Artifacts":
+            "SELECT AVG(`rank`) AS avg_rank FROM artifact_media;",
 
-    "⑧ Artifacts with Higher Colorcount than Mediaccount":
-        "SELECT * FROM artifact_media WHERE colorcount > mediacount;",
+        "⑧ Artifacts with Higher Colorcount than Mediaccount":
+            "SELECT * FROM artifact_media WHERE colorcount > mediacount;",
 
-    "⑨ Artifacts Created Between 1500 and 1600":
-        "SELECT * FROM artifact_media WHERE datebegin >= 1500 AND dateend <= 1600;",
+        "⑨ Artifacts Created Between 1500 and 1600":
+            "SELECT * FROM artifact_media WHERE datebegin >= 1500 AND dateend <= 1600;",
 
-    "⑩ Artifacts with No Media Files":
-        "SELECT * FROM artifact_media WHERE mediacount = 0 OR mediacount IS NULL;",
+        "⑩ Artifacts with No Media Files":
+            "SELECT * FROM artifact_media WHERE mediacount = 0 OR mediacount IS NULL;",
 
-    "⑪ All Distinct Hues":
-        "SELECT DISTINCT hue FROM artifact_colors WHERE hue IS NOT NULL ORDER BY hue;",
+        "⑪ All Distinct Hues":
+            "SELECT DISTINCT hue FROM artifact_colors WHERE hue IS NOT NULL ORDER BY hue;",
 
-    "⑫ Top 5 Most Used Colors":
-        "SELECT color, COUNT(*) AS frequency FROM artifact_colors GROUP BY color ORDER BY frequency DESC LIMIT 5;",
+        "⑫ Top 5 Most Used Colors":
+            "SELECT color, COUNT(*) AS frequency FROM artifact_colors GROUP BY color ORDER BY frequency DESC LIMIT 5;",
 
-    "⑬ Average Coverage Percentage per Hue":
-        "SELECT hue, ROUND(AVG(percent), 2) AS avg_percent FROM artifact_colors WHERE percent IS NOT NULL GROUP BY hue ORDER BY avg_percent DESC;",
+        "⑬ Average Coverage Percentage per Hue":
+            "SELECT hue, ROUND(AVG(percent), 2) AS avg_percent FROM artifact_colors WHERE percent IS NOT NULL GROUP BY hue ORDER BY avg_percent DESC;",
 
-    "⑭ Colors Used for Given Artifact ID":
-        "SELECT * FROM artifact_colors WHERE objectid = {artifact_id};",
+    
+        "⑭ Colors Used for Given Artifact ID":
+            "SELECT * FROM artifact_colors WHERE objectid = %s;",
 
-    "⑮ Total Number of Color Entries":
-        "SELECT COUNT(*) AS total_colors FROM artifact_colors;",
+        "⑮ Total Number of Color Entries":
+            "SELECT COUNT(*) AS total_colors FROM artifact_colors;",
 
-    "⑯ Artifact Titles and Hues (Byzantine Culture)":
-        """
-        SELECT m.title, c.hue
-        FROM artifact_metadata m
-        JOIN artifact_colors c ON m.id = c.objectid
-        WHERE LOWER(m.culture) LIKE '%%byzantine%%';
-        """,
+        "⑯ Artifact Titles and Hues (Byzantine Culture)":
+            """
+            SELECT m.title, c.hue
+            FROM artifact_metadata m
+            JOIN artifact_colors c ON m.id = c.objectid
+            WHERE LOWER(m.culture) LIKE '%%byzantine%%';
+            """,
 
-    "⑰ Artifact Titles with Associated Hues":
-        """
-        SELECT m.title, c.hue
-        FROM artifact_metadata m
-        JOIN artifact_colors c ON m.id = c.objectid
-        ORDER BY m.title;
-        """,
+        "⑰ Artifact Titles with Associated Hues":
+            """
+            SELECT m.title, c.hue
+            FROM artifact_metadata m
+            JOIN artifact_colors c ON m.id = c.objectid
+            ORDER BY m.title;
+            """,
 
-    "⑱ Artifacts with Period, Culture, and Media Rank":
-        """
-        SELECT m.title, m.culture, m.period, me.`rank`
-        FROM artifact_metadata m
-        JOIN artifact_media me ON m.id = me.objectid
-        WHERE m.period IS NOT NULL;
-        """,
+        "⑱ Artifacts with Period, Culture, and Media Rank":
+            """
+            SELECT m.title, m.culture, m.period, me.`rank`
+            FROM artifact_metadata m
+            JOIN artifact_media me ON m.id = me.objectid
+            WHERE m.period IS NOT NULL;
+            """,
 
-    "⑲ Top 10 Artifacts with Hue 'Grey'":
-        """
-        SELECT m.title, c.hue, me.`rank`
-        FROM artifact_metadata m
-        JOIN artifact_colors c ON m.id = c.objectid
-        JOIN artifact_media me ON m.id = me.objectid
-        WHERE LOWER(c.hue) = 'grey'
-        ORDER BY me.`rank` DESC
-        LIMIT 10;
-        """,
+        "⑲ Top 10 Artifacts with Hue 'Grey'":
+            """
+            SELECT m.title, c.hue, me.`rank`
+            FROM artifact_metadata m
+            JOIN artifact_colors c ON m.id = c.objectid
+            JOIN artifact_media me ON m.id = me.objectid
+            WHERE LOWER(c.hue) = 'grey'
+            ORDER BY me.`rank` DESC
+            LIMIT 10;
+            """,
 
-    "⑳ Artifacts per Classification (Avg Media Count)":
-        """
-        SELECT m.classification,
-               COUNT(*) AS total_artifacts,
-               ROUND(AVG(me.mediacount), 2) AS avg_media_count
-        FROM artifact_metadata m
-        JOIN artifact_media me ON m.id = me.objectid
-        GROUP BY m.classification
-        ORDER BY total_artifacts DESC;
-        """,
+        "⑳ Artifacts per Classification (Avg Media Count)":
+            """
+            SELECT m.classification,
+                COUNT(*) AS total_artifacts,
+                ROUND(AVG(me.mediacount), 2) AS avg_media_count
+            FROM artifact_metadata m
+            JOIN artifact_media me ON m.id = me.objectid
+            GROUP BY m.classification
+            ORDER BY total_artifacts DESC;
+            """,
 
-    "㉑ Top 5 Cultures with the Most Artifacts":
-        """
-        SELECT culture, COUNT(*) AS total_artifacts
-        FROM artifact_metadata
-        WHERE culture IS NOT NULL
-        GROUP BY culture
-        ORDER BY total_artifacts DESC
-        LIMIT 5;
-        """,
+        "㉑ Top 5 Cultures with the Most Artifacts":
+            """
+            SELECT culture, COUNT(*) AS total_artifacts
+            FROM artifact_metadata
+            WHERE culture IS NOT NULL
+            GROUP BY culture
+            ORDER BY total_artifacts DESC
+            LIMIT 5;
+            """,
 
-    "㉒ Department with the Highest Average Accession Year":
-        """
-        SELECT department, ROUND(AVG(accessionyear), 2) AS avg_accession_year
-        FROM artifact_metadata
-        WHERE accessionyear IS NOT NULL
-        GROUP BY department
-        ORDER BY avg_accession_year DESC
-        LIMIT 1;
-        """,
+        "㉒ Department with the Highest Average Accession Year":
+            """
+            SELECT department, ROUND(AVG(accessionyear), 2) AS avg_accession_year
+            FROM artifact_metadata
+            WHERE accessionyear IS NOT NULL
+            GROUP BY department
+            ORDER BY avg_accession_year DESC
+            LIMIT 1;
+            """,
 
-    "㉓ Artifacts Made of Bronze":
-        """
-        SELECT id, title, medium, culture
-        FROM artifact_metadata
-        WHERE LOWER(medium) LIKE '%bronze%';
-        """,
+        "㉓ Artifacts Made of Bronze":
+            """
+            SELECT id, title, medium, culture
+            FROM artifact_metadata
+            WHERE LOWER(medium) LIKE '%bronze%';
+            """,
 
-    "㉔ Compare Average Color Coverage (Red vs Blue)":
-        """
-        SELECT hue, ROUND(AVG(percent), 2) AS avg_coverage
-        FROM artifact_colors
-        WHERE LOWER(hue) IN ('red', 'blue')
-        GROUP BY hue;
-        """,
+        "㉔ Compare Average Color Coverage (Red vs Blue)":
+            """
+            SELECT hue, ROUND(AVG(percent), 2) AS avg_coverage
+            FROM artifact_colors
+            WHERE LOWER(hue) IN ('red', 'blue')
+            GROUP BY hue;
+            """,
 
-    "㉕ Century with the Most Artifacts":
-        """
-        SELECT century, COUNT(*) AS artifact_count
-        FROM artifact_metadata
-        WHERE century IS NOT NULL
-        GROUP BY century
-        ORDER BY artifact_count DESC
-        LIMIT 1;
-        """,
+        "㉕ Century with the Most Artifacts":
+            """
+            SELECT century, COUNT(*) AS artifact_count
+            FROM artifact_metadata
+            WHERE century IS NOT NULL
+            GROUP BY century
+            ORDER BY artifact_count DESC
+            LIMIT 1;
+            """,
 
-    "㉖ Top 5 Classifications with Most Diverse Cultures":
-        """
-        SELECT classification, COUNT(DISTINCT culture) AS unique_cultures
-        FROM artifact_metadata
-        WHERE culture IS NOT NULL
-        GROUP BY classification
-        ORDER BY unique_cultures DESC
-        LIMIT 5;
-        """,
+        "㉖ Top 5 Classifications with Most Diverse Cultures":
+            """
+            SELECT classification, COUNT(DISTINCT culture) AS unique_cultures
+            FROM artifact_metadata
+            WHERE culture IS NOT NULL
+            GROUP BY classification
+            ORDER BY unique_cultures DESC
+            LIMIT 5;
+            """,
 
-    "㉗ Year Range (Min–Max) per Classification":
-        """
-        SELECT m.classification,
-               MIN(me.datebegin) AS earliest_year,
-               MAX(me.dateend) AS latest_year
-        FROM artifact_metadata m
-        JOIN artifact_media me ON m.id = me.objectid
-        GROUP BY m.classification
-        ORDER BY earliest_year;
-        """,
+        "㉗ Year Range (Min–Max) per Classification":
+            """
+            SELECT m.classification,
+                MIN(me.datebegin) AS earliest_year,
+                MAX(me.dateend) AS latest_year
+            FROM artifact_metadata m
+            JOIN artifact_media me ON m.id = me.objectid
+            GROUP BY m.classification
+            ORDER BY earliest_year;
+            """,
 
-    "㉘ Artifacts with High Image and Color Diversity":
-        """
-        SELECT m.title, me.imagecount, me.colorcount
-        FROM artifact_metadata m
-        JOIN artifact_media me ON m.id = me.objectid
-        WHERE me.imagecount > 5 AND me.colorcount > 5
-        ORDER BY me.imagecount DESC, me.colorcount DESC;
-        """,
+        "㉘ Artifacts with High Image and Color Diversity":
+            """
+            SELECT m.title, me.imagecount, me.colorcount
+            FROM artifact_metadata m
+            JOIN artifact_media me ON m.id = me.objectid
+            WHERE me.imagecount > 5 AND me.colorcount > 5
+            ORDER BY me.imagecount DESC, me.colorcount DESC;
+            """,
 
-    "㉙ Percentage of Artifacts with Color Data":
-        """
-        SELECT 
-            ROUND(
-                (COUNT(DISTINCT c.objectid) / COUNT(DISTINCT m.id)) * 100, 2
-            ) AS percent_with_color_data
-        FROM artifact_metadata m
-        LEFT JOIN artifact_colors c ON m.id = c.objectid;
-        """,
+        "㉙ Percentage of Artifacts with Color Data":
+            """
+            SELECT 
+                ROUND(
+                    (COUNT(DISTINCT c.objectid) / COUNT(DISTINCT m.id)) * 100, 2
+                ) AS percent_with_color_data
+            FROM artifact_metadata m
+            LEFT JOIN artifact_colors c ON m.id = c.objectid;
+            """,
 
-    "㉚ Cultures with Highest Average Media Rank":
-        """
-        SELECT m.culture, ROUND(AVG(me.`rank`), 2) AS avg_rank
-        FROM artifact_metadata m
-        JOIN artifact_media me ON m.id = me.objectid
-        WHERE m.culture IS NOT NULL
-        GROUP BY m.culture
-        ORDER BY avg_rank DESC
-        LIMIT 5;
-        """
-    }
-
-
+        "㉚ Cultures with Highest Average Media Rank":
+            """
+            SELECT m.culture, ROUND(AVG(me.`rank`), 2) AS avg_rank
+            FROM artifact_metadata m
+            JOIN artifact_media me ON m.id = me.objectid
+            WHERE m.culture IS NOT NULL
+            GROUP BY m.culture
+            ORDER BY avg_rank DESC
+            LIMIT 5;
+            """
+        }
     selected_query = st.selectbox("🧠 Choose a Query", list(queries.keys()))
-    if st.button("▶️ Run Query"):
+    # Show text input only for Query 14
+    artifact_id = None
+    if selected_query == "⑭ Colors Used for Given Artifact ID":
+        artifact_id = st.text_input("Enter Artifact ID:")
+
+    # Single Run button for all queries
+    if st.button("Run Query"):
         conn = connect_db()
         cur = conn.cursor()
-        cur.execute(queries[selected_query])
-        rows = cur.fetchall()
-        cols = [d[0] for d in cur.description]
-        conn.close()
-        st.dataframe([dict(zip(cols, r)) for r in rows], use_container_width=True)
+
+        try:
+            # Handle Query 14 separately with user input
+            if selected_query == "⑭ Colors Used for Given Artifact ID":
+                if not artifact_id:
+                    st.warning("Please enter an Artifact ID before running the query.")
+                else:
+                    cur.execute(queries[selected_query], (artifact_id,))
+            else:
+                cur.execute(queries[selected_query])
+
+            # Fetch and display results
+            rows = cur.fetchall()
+            cols = [desc[0] for desc in cur.description]
+            conn.close()
+
+            if rows:
+                st.dataframe([dict(zip(cols, r)) for r in rows], use_container_width=True)
+            else:
+                st.info("No data found for this query.")
+
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+            conn.close()
+
 
 # ---------- 5️⃣ CREATOR INFO ----------
 elif page.startswith("5️⃣"):
