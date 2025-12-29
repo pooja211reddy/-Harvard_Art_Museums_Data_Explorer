@@ -46,6 +46,7 @@ Create a database named harvard_art
 bash
 Copy code
 streamlit run harvard_artifacts.py
+
 💾 Database Schema
 Tables:
 
@@ -60,12 +61,8 @@ Each table stores unique aspects of artifacts like title, medium, image count, h
 🧩 API Reference
 Base API: Harvard Art Museums API
 
-Example Endpoint:
-
-arduino
 Copy code
 https://api.harvardartmuseums.org/object?apikey=YOUR_API_KEY
-🖼️ Flow Diagram
 
 🧑‍🎨 Credits
 Developed by: Pooja Reddy Nedunuri
