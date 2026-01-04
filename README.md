@@ -3,6 +3,7 @@
 An interactive **Streamlit + MySQL** application that fetches, stores, and visualizes data from the **Harvard Art Museums API**.  
 It enables users to dynamically query thousands of art artifact records and explore metadata, media details, and color patterns across cultures and periods.  
 
+![Introduction View](Intro.png)
 ---
 
 ## 🚀 Features
