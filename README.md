@@ -30,7 +30,7 @@ It enables users to dynamically query thousands of art artifact records and expl
    - `artifact_media`
    - `artifact_colors`
 ![Insert View](Insert1.png)
-![Insert View](Insert1.png)
+![Insert View](Insert2.png)
 
 3️⃣ **Data Exploration:**  
    → Query through Streamlit interface (predefined + custom SQL queries).  
