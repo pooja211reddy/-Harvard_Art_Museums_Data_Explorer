@@ -22,19 +22,23 @@ It enables users to dynamically query thousands of art artifact records and expl
    → Uses Harvard API to extract artifact details by classification (Paintings, Coins, Jewelry, etc.).
 
    ![Fetch View](Fetch.png)
-   !(Extract.png)
+   ![Extract View](Extract.png)
 
 2️⃣ **Data Storage:**  
    → Saves data into MySQL tables:
    - `artifact_metadata`
    - `artifact_media`
    - `artifact_colors`
+![Insert View](Insert1.png)
+![Insert View](Insert1.png)
 
 3️⃣ **Data Exploration:**  
    → Query through Streamlit interface (predefined + custom SQL queries).  
+![Query View](Query_options.png)
 
 4️⃣ **Visualization:**  
    → Display metadata, color palettes, and artifact metrics interactively.
+![Visualization](Query.png)
 
 ---
 
