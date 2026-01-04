@@ -19,7 +19,10 @@ It enables users to dynamically query thousands of art artifact records and expl
 ## Workflow Overview
 
 1️⃣ **Data Fetching:**  
-   → Uses Harvard API to extract artifact details by classification (Paintings, Coins, Jewelry, etc.).  
+   → Uses Harvard API to extract artifact details by classification (Paintings, Coins, Jewelry, etc.).
+
+   ![Fetch View](Fetch.png)
+   !(Extract.png)
 
 2️⃣ **Data Storage:**  
    → Saves data into MySQL tables:
